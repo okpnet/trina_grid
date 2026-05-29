@@ -41,8 +41,10 @@ class TrinaBaseRow extends StatelessWidget {
     return true;
   }
 
+  ///row enable drag and enable drop property added.
+  ///If result value false then won't be able to drop.
   bool _handleOnWillAccept(DragTargetDetails<TrinaRow> draggingRow) {
-    return !_checkSameDragRows(draggingRow);
+    return row.enableDrop && !_checkSameDragRows(draggingRow);
   }
 
   void _handleOnAccept(DragTargetDetails<TrinaRow> draggingRow) async {
@@ -309,7 +311,11 @@ class _RowContainerWidgetState extends TrinaStateWithChange<_RowContainerWidget>
       rowColor = stateManager.configuration.style.rowCheckedColor;
     } else if (isHoveredRow &&
         stateManager.configuration.style.enableRowHoverColor) {
-      rowColor = stateManager.configuration.style.rowHoveredColor;
+      ///row enable drag and enable drop property added.
+      ///If the row cannot be dropped, the row color will revert to the default.
+      rowColor = !widget.row.enableDrop
+          ? rowColor
+          : stateManager.configuration.style.rowHoveredColor;
     }
 
     final frozenBorder = widget.row.frozen != TrinaRowFrozen.none

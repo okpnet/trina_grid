@@ -31,7 +31,12 @@ class TrinaGridExamplePage extends StatefulWidget {
 
 class _TrinaGridExamplePageState extends State<TrinaGridExamplePage> {
   final List<TrinaColumn> columns = <TrinaColumn>[
-    TrinaColumn(title: 'Id', field: 'id', type: TrinaColumnType.text()),
+    TrinaColumn(
+      title: 'Id',
+      field: 'id',
+      type: TrinaColumnType.text(),
+      enableRowDrag: true,
+    ),
     TrinaColumn(title: 'Name', field: 'name', type: TrinaColumnType.text()),
     TrinaColumn(title: 'Age', field: 'age', type: TrinaColumnType.number()),
     TrinaColumn(
@@ -110,6 +115,7 @@ class _TrinaGridExamplePageState extends State<TrinaGridExamplePage> {
         'working_time': TrinaCell(value: '10:00'),
         'salary': TrinaCell(value: 400),
       },
+      enableDrag: false,
     ),
     TrinaRow(
       cells: {
@@ -121,6 +127,18 @@ class _TrinaGridExamplePageState extends State<TrinaGridExamplePage> {
         'joined': TrinaCell(value: '2021-03-01'),
         'working_time': TrinaCell(value: '11:00'),
         'salary': TrinaCell(value: 700),
+      },
+      enableDrop: false,
+    ),
+    TrinaRow(
+      cells: {
+        'id': TrinaCell(value: 'user4'),
+        'name': TrinaCell(value: 'Spike'),
+        'age': TrinaCell(value: 99),
+        'role': TrinaCell(value: 'Owner'),
+        'joined': TrinaCell(value: '2021-03-01'),
+        'working_time': TrinaCell(value: '11:00'),
+        'salary': TrinaCell(value: 100),
       },
     ),
   ];

@@ -187,21 +187,24 @@ class _TrinaDefaultCellState extends TrinaStateWithChange<TrinaDefaultCell> {
     return Row(
       children: [
         if (_canRowDrag)
-          Flexible(
-            flex: 0,
-            child: _RowDragIconWidget(
-              column: widget.column,
-              row: widget.row,
-              rowIdx: widget.rowIdx,
-              stateManager: stateManager,
-              feedbackWidget: cellWidget,
-              dragIcon: Icon(
-                Icons.drag_indicator,
-                size: style.iconSize,
-                color: style.iconColor,
+          if (widget.row.enableDrag)
+            Flexible(
+              flex: 0,
+              child: _RowDragIconWidget(
+                column: widget.column,
+                row: widget.row,
+                rowIdx: widget.rowIdx,
+                stateManager: stateManager,
+                feedbackWidget: cellWidget,
+                dragIcon: Icon(
+                  Icons.drag_indicator,
+                  size: style.iconSize,
+                  color: style.iconColor,
+                ),
               ),
-            ),
-          ),
+            )
+          else
+            Flexible(flex: 0, child: SizedBox(width: style.iconSize)),
         if (widget.column.enableRowChecked &&
             depth >= widget.column.rowCheckBoxGroupDepth)
           Flexible(

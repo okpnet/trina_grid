@@ -14,11 +14,17 @@ class TrinaRow<T> {
     TrinaRowFrozen? frozen,
     this.height,
     this.metadata,
+    this.enableDrop = true, //Add
+    this.enableDrag = true, //Add
   }) : type = type ?? TrinaRowTypeNormal.instance,
        _checked = checked,
        _state = TrinaRowState.none,
        _key = key ?? UniqueKey(),
        frozen = frozen ?? TrinaRowFrozen.none;
+
+  ///row enable drag and enable drop property added.
+  bool enableDrag;
+  bool enableDrop;
 
   final TrinaRowType type;
 
