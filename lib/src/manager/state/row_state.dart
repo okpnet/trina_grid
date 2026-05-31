@@ -404,6 +404,8 @@ mixin RowState implements ITrinaGridState {
     List<TrinaRow> rows,
     int? indexToMove, {
     bool notify = true,
+    Offset? localPosition, //Add
+    Size? rowSize, //Add
   }) {
     if (rows.isEmpty || indexToMove == null) {
       return;
@@ -434,7 +436,20 @@ mixin RowState implements ITrinaGridState {
     updateCurrentCellPosition(notify: false);
 
     if (onRowsMoved != null) {
-      onRowsMoved!(TrinaGridOnRowsMovedEvent(idx: indexToMove, rows: rows));
+      // onRowsMoved!(TrinaGridOnRowsMovedEvent(idx: indexToMove, rows: rows));
+      if (localPosition != null && rowSize != null) {
+        //Add
+        onRowsMoved!(
+          ExtGridRowsMovedEvent(
+            idx: indexToMove,
+            rows: rows,
+            dropTargetRowSize: rowSize,
+            localPostion: localPosition,
+          ),
+        );
+      } else {
+        onRowsMoved!(TrinaGridOnRowsMovedEvent(idx: indexToMove, rows: rows));
+      }
     }
 
     notifyListeners(notify, moveRowsByIndex.hashCode);

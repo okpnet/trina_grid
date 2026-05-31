@@ -4,6 +4,8 @@ import 'dart:collection';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:trina_grid/src/manager/state/extensions/row_drag_hover_state.dart';
+import 'package:trina_grid/src/manager/state/extensions/row_drop_state.dart';
 import 'package:trina_grid/trina_grid.dart';
 
 import 'state/cell_state.dart';
@@ -45,7 +47,9 @@ abstract class ITrinaGridState
         IScrollState,
         ISelectingState,
         IVisibilityLayoutState,
-        IHoveringState {}
+        IHoveringState,
+        IRowDragHoverState,
+        IRowDropState {}
 
 class TrinaGridStateChangeNotifier extends TrinaChangeNotifier
     with
@@ -66,7 +70,9 @@ class TrinaGridStateChangeNotifier extends TrinaChangeNotifier
         ScrollState,
         SelectingState,
         VisibilityLayoutState,
-        HoveringState {
+        HoveringState,
+        RowDragHoverState,
+        RowDropState {
   TrinaGridStateChangeNotifier({
     required List<TrinaColumn> columns,
     required List<TrinaRow> rows,
@@ -102,6 +108,7 @@ class TrinaGridStateChangeNotifier extends TrinaChangeNotifier
     TrinaGridConfiguration configuration = const TrinaGridConfiguration(),
     TrinaGridMode? mode,
     this.metadata,
+    this.isTreeDragMode = false,
   }) : refColumns = FilteredList(initialList: columns),
        refRows = FilteredList(initialList: rows),
        refColumnGroups = FilteredList<TrinaColumnGroup>(
@@ -119,6 +126,8 @@ class TrinaGridStateChangeNotifier extends TrinaChangeNotifier
   }
 
   final double? rowsCacheExtent;
+
+  final bool isTreeDragMode;
 
   /// {@macro trina_grid_row_wrapper}
   @override
@@ -356,6 +365,7 @@ class TrinaGridStateManager extends TrinaGridStateChangeNotifier {
     super.notifierFilterResolver,
     super.configuration,
     super.mode,
+    super.isTreeDragMode,
   });
 
   TrinaChangeNotifierFilter<T> resolveNotifierFilter<T>() {

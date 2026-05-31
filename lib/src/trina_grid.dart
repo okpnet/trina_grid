@@ -133,9 +133,14 @@ class TrinaGrid extends TrinaStatefulWidget {
     this.onLazyFetchCompleted,
     this.scrollPhysics,
     this.fitContent = false,
+    this.isTreeDragMode = false,
+
+    ///We'll improve the drag-over UI to allow adding the parent of a node.
   });
 
   final double? rowsCacheExtent;
+
+  final bool isTreeDragMode;
 
   /// {@macro trina_grid_row_wrapper}
   final RowWrapper? rowWrapper;
@@ -761,6 +766,7 @@ class TrinaGridState extends TrinaStateWithChange<TrinaGrid> {
       notifierFilterResolver: widget.notifierFilterResolver,
       configuration: widget.configuration,
       mode: widget.mode,
+      isTreeDragMode: widget.isTreeDragMode,
     );
 
     // Dispose

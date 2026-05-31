@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:trina_grid/src/manager/event/extensitons/drop_event.dart';
+import 'package:trina_grid/src/ui/extensions/base_row_extension.dart';
+import 'package:trina_grid/src/ui/extensions/tree_base_row.dart';
 import 'package:trina_grid/trina_grid.dart';
 import 'package:trina_grid/src/manager/event/trina_grid_row_hover_event.dart';
 
 import 'ui.dart';
 
-class TrinaBaseRow extends StatelessWidget {
+class TrinaBaseRow extends StatelessWidget with TreeBaseRow {
   final int rowIdx;
 
   final TrinaRow row;
 
   final List<TrinaColumn> columns;
-
+  @override
   final TrinaGridStateManager stateManager;
 
   final bool visibilityLayout;
@@ -44,7 +47,7 @@ class TrinaBaseRow extends StatelessWidget {
   ///row enable drag and enable drop property added.
   ///If result value false then won't be able to drop.
   bool _handleOnWillAccept(DragTargetDetails<TrinaRow> draggingRow) {
-    return row.enableDrop && !_checkSameDragRows(draggingRow);
+    return shouldDrop(rowIdx) && !_checkSameDragRows(draggingRow);
   }
 
   void _handleOnAccept(DragTargetDetails<TrinaRow> draggingRow) async {
@@ -52,7 +55,6 @@ class TrinaBaseRow extends StatelessWidget {
     final draggingRows = stateManager.dragRows.isNotEmpty
         ? stateManager.dragRows
         : [draggingRow.data];
-
     stateManager.eventManager!.addEvent(
       TrinaGridDragRowsEvent(rows: draggingRows, targetIdx: rowIdx),
     );
@@ -115,6 +117,7 @@ class TrinaBaseRow extends StatelessWidget {
 
   void _handleOnEnter() {
     // set hovered row index
+    stateManager.setHoveredRowIdx(rowIdx); //add
     stateManager.eventManager!.addEvent(
       TrinaGridRowHoverEvent(rowIdx: rowIdx, isHovered: true),
     );
@@ -122,6 +125,7 @@ class TrinaBaseRow extends StatelessWidget {
 
   void _handleOnExit() {
     // reset hovered row index
+    stateManager.leaveRowHoverOffset(); //add
     stateManager.eventManager!.addEvent(
       TrinaGridRowHoverEvent(rowIdx: rowIdx, isHovered: false),
     );
@@ -129,13 +133,15 @@ class TrinaBaseRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final box = context.findRenderObject() as RenderBox?; //add
     return MouseRegion(
       onEnter: (event) => _handleOnEnter(),
       onExit: (event) => _handleOnExit(),
       child: DragTarget<TrinaRow>(
         onWillAcceptWithDetails: _handleOnWillAccept,
-        onAcceptWithDetails: _handleOnAccept,
+        onAcceptWithDetails: (details) => handleOnAcceptExt(details, box!),
         builder: _dragTargetBuilder,
+        onMove: (details) => handleOnMove(details, box), //add
       ),
     );
   }
@@ -235,7 +241,8 @@ class _RowContainerWidget extends TrinaStatefulWidget {
 class _RowContainerWidgetState extends TrinaStateWithChange<_RowContainerWidget>
     with
         AutomaticKeepAliveClientMixin,
-        TrinaStateWithKeepAlive<_RowContainerWidget> {
+        TrinaStateWithKeepAlive<_RowContainerWidget>,
+        TreeBaseRow {
   @override
   TrinaGridStateManager get stateManager => widget.stateManager;
 
@@ -260,7 +267,6 @@ class _RowContainerWidgetState extends TrinaStateWithChange<_RowContainerWidget>
   @override
   void initState() {
     super.initState();
-
     updateState(TrinaNotifierEventForceUpdate.instance);
   }
 
@@ -311,11 +317,7 @@ class _RowContainerWidgetState extends TrinaStateWithChange<_RowContainerWidget>
       rowColor = stateManager.configuration.style.rowCheckedColor;
     } else if (isHoveredRow &&
         stateManager.configuration.style.enableRowHoverColor) {
-      ///row enable drag and enable drop property added.
-      ///If the row cannot be dropped, the row color will revert to the default.
-      rowColor = !widget.row.enableDrop
-          ? rowColor
-          : stateManager.configuration.style.rowHoveredColor;
+      rowColor = stateManager.configuration.style.rowHoveredColor;
     }
 
     final frozenBorder = widget.row.frozen != TrinaRowFrozen.none
@@ -361,11 +363,34 @@ class _RowContainerWidgetState extends TrinaStateWithChange<_RowContainerWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final decoration = !shouldDrop(widget.rowIdx)
+        ? BoxDecoration()
+        : _decoration;
 
-    return _AnimatedOrNormalContainer(
+    ///oliginally widget
+    final oliginallyWidget = _AnimatedOrNormalContainer(
       enable: widget.enableRowColorAnimation,
-      decoration: _decoration,
+      decoration: decoration,
       child: widget.child,
+    );
+    return _slideRowBuild(context, oliginallyWidget);
+  }
+
+  ///Added.
+  ///if tree widget then take into account move to parent.
+  Widget _slideRowBuild(BuildContext context, Widget oliginallyWidget) {
+    return ValueListenableBuilder<Offset?>(
+      valueListenable: stateManager.rowHoverNotifier,
+      builder: (context, hoveredRowIdx, child) {
+        final isShouldSlide = shouldSlide(widget.rowIdx);
+        return !isShouldSlide
+            ? oliginallyWidget
+            : AnimatedContainer(
+                duration: Duration(milliseconds: 120),
+                transform: Matrix4.translationValues(20, 0, 0),
+                child: oliginallyWidget,
+              );
+      },
     );
   }
 }

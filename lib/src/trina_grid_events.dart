@@ -402,3 +402,15 @@ class TrinaGridOnKeyEvent {
     return out;
   }
 }
+
+// The TrinaGridOnRowsMovedEvent class will be given row position and size information.
+class ExtGridRowsMovedEvent extends TrinaGridOnRowsMovedEvent {
+  final Offset localPostion;
+  final Size dropTargetRowSize;
+  const ExtGridRowsMovedEvent({
+    required super.idx,
+    required super.rows,
+    required this.localPostion,
+    required this.dropTargetRowSize,
+  });
+}

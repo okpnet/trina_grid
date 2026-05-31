@@ -169,8 +169,12 @@ class _TrinaGridExamplePageState extends State<TrinaGridExamplePage> {
       body: Container(
         padding: const EdgeInsets.all(15),
         child: TrinaGrid(
+          isTreeDragMode: true, //Add
           columns: columns,
           rows: rows,
+          onRowsMoved: (event) {
+            debugPrint("rIdx:${event.idx} ${event is ExtGridRowsMovedEvent}");
+          },
           columnGroups: columnGroups,
           onLoaded: (TrinaGridOnLoadedEvent event) {
             stateManager = event.stateManager;
