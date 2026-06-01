@@ -169,7 +169,12 @@ class _TrinaGridExamplePageState extends State<TrinaGridExamplePage> {
       body: Container(
         padding: const EdgeInsets.all(15),
         child: TrinaGrid(
-          isTreeDragMode: true, //Add
+          // isTreeDragMode: true, //Add
+          // mode: TrinaGridMode.select,
+          onSelected: (event) {
+            debugPrint('IDX=${event.rowIdx}');
+            event.row!.setChecked(true, viaSelect: true);
+          },
           columns: columns,
           rows: rows,
           onRowsMoved: (event) {
@@ -178,25 +183,26 @@ class _TrinaGridExamplePageState extends State<TrinaGridExamplePage> {
           columnGroups: columnGroups,
           onLoaded: (TrinaGridOnLoadedEvent event) {
             stateManager = event.stateManager;
+            stateManager.setSelectingMode(TrinaGridSelectingMode.row);
             stateManager.setShowColumnFilter(true);
           },
           onChanged: (TrinaGridOnChangedEvent event) {
             print(event);
           },
           configuration: const TrinaGridConfiguration(),
-          selectDateCallback: (TrinaCell cell, TrinaColumn column) async {
-            return showDatePicker(
-              context: context,
-              initialDate:
-                  TrinaDateTimeHelper.parseOrNullWithFormat(
-                    cell.value,
-                    column.type.date.format,
-                  ) ??
-                  DateTime.now(),
-              firstDate: column.type.date.startDate ?? DateTime(0),
-              lastDate: column.type.date.endDate ?? DateTime(9999),
-            );
-          },
+          // selectDateCallback: (TrinaCell cell, TrinaColumn column) async {
+          //   return showDatePicker(
+          //     context: context,
+          //     initialDate:
+          //         TrinaDateTimeHelper.parseOrNullWithFormat(
+          //           cell.value,
+          //           column.type.date.format,
+          //         ) ??
+          //         DateTime.now(),
+          //     firstDate: column.type.date.startDate ?? DateTime(0),
+          //     lastDate: column.type.date.endDate ?? DateTime(9999),
+          //   );
+          // },
         ),
       ),
     );
