@@ -171,10 +171,10 @@ class _TrinaGridExamplePageState extends State<TrinaGridExamplePage> {
         child: TrinaGrid(
           // isTreeDragMode: true, //Add
           // mode: TrinaGridMode.select,
-          onSelected: (event) {
-            debugPrint('IDX=${event.rowIdx}');
-            event.row!.setChecked(true, viaSelect: true);
-          },
+          // onSelected: (event) {
+          //   debugPrint('IDX=${event.rowIdx}');
+          //   event.row!.setChecked(true, viaSelect: true);
+          // },
           columns: columns,
           rows: rows,
           onRowsMoved: (event) {

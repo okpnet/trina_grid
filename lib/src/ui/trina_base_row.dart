@@ -314,8 +314,7 @@ class _RowContainerWidgetState extends TrinaStateWithChange<_RowContainerWidget>
     if (isActiveRow && stateManager.configuration.style.activatedColor.a > 0) {
       rowColor = stateManager.configuration.style.activatedColor;
     } else if (isCheckedRow) {
-      rowColor = Colors.amber
-      // rowColor = stateManager.configuration.style.rowCheckedColor;
+      rowColor = stateManager.configuration.style.rowCheckedColor;
     } else if (isHoveredRow &&
         stateManager.configuration.style.enableRowHoverColor) {
       rowColor = stateManager.configuration.style.rowHoveredColor;
@@ -364,14 +363,11 @@ class _RowContainerWidgetState extends TrinaStateWithChange<_RowContainerWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final decoration = !shouldDrop(widget.rowIdx)
-        ? BoxDecoration()
-        : _decoration;
 
     ///oliginally widget
     final oliginallyWidget = _AnimatedOrNormalContainer(
       enable: widget.enableRowColorAnimation,
-      decoration: decoration,
+      decoration: _decoration,
       child: widget.child,
     );
     return _slideRowBuild(context, oliginallyWidget);
